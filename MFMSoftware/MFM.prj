@@ -1,0 +1,194 @@
+<deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
+  <configuration build-checksum="3627311287" file="\\dm11.hhmi.org\aic\Jesse\Matlab\MATLAB\MFM Codes\MFM_share\MFM.prj" location="\\dm11.hhmi.org\aic\Jesse\Matlab\MATLAB\MFM Codes\MFM_share" name="MFM" preferred-package-location="\\dm11.hhmi.org\aic\Jesse\Matlab\MATLAB\MFM Codes\MFM_share\MFM\for_redistribution" preferred-package-type="package.type.exe" target="target.ezdeploy.standalone" target-name="Application Compiler">
+    <param.appname>AICMFM</param.appname>
+    <param.icon />
+    <param.icons />
+    <param.version>1.0</param.version>
+    <param.authnamewatermark />
+    <param.email />
+    <param.company />
+    <param.summary />
+    <param.description />
+    <param.screenshot />
+    <param.guid />
+    <param.installpath.string>\AICMFM\</param.installpath.string>
+    <param.installpath.combo>option.installpath.programfiles</param.installpath.combo>
+    <param.logo />
+    <param.install.notes />
+    <param.target.install.notes />
+    <param.intermediate>${PROJECT_ROOT}\MFM\for_testing</param.intermediate>
+    <param.files.only>${PROJECT_ROOT}\MFM\for_redistribution_files_only</param.files.only>
+    <param.output>${PROJECT_ROOT}\MFM\for_redistribution</param.output>
+    <param.logdir>${PROJECT_ROOT}\MFM</param.logdir>
+    <param.enable.clean.build>false</param.enable.clean.build>
+    <param.user.defined.mcr.options />
+    <param.target.type>subtarget.standalone</param.target.type>
+    <param.support.packages />
+    <param.web.mcr>true</param.web.mcr>
+    <param.package.mcr>false</param.package.mcr>
+    <param.no.mcr>false</param.no.mcr>
+    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
+    <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
+    <param.windows.command.prompt>false</param.windows.command.prompt>
+    <param.create.log>false</param.create.log>
+    <param.log.file />
+    <param.native.matlab>false</param.native.matlab>
+    <param.checkbox>false</param.checkbox>
+    <param.example />
+    <param.help.text />
+    <unset>
+      <param.icon />
+      <param.icons />
+      <param.version />
+      <param.authnamewatermark />
+      <param.email />
+      <param.company />
+      <param.summary />
+      <param.description />
+      <param.screenshot />
+      <param.guid />
+      <param.installpath.string />
+      <param.installpath.combo />
+      <param.logo />
+      <param.target.install.notes />
+      <param.intermediate />
+      <param.files.only />
+      <param.output />
+      <param.logdir />
+      <param.enable.clean.build />
+      <param.user.defined.mcr.options />
+      <param.target.type />
+      <param.support.packages />
+      <param.web.mcr />
+      <param.package.mcr />
+      <param.no.mcr />
+      <param.web.mcr.name />
+      <param.package.mcr.name />
+      <param.no.mcr.name />
+      <param.create.log />
+      <param.log.file />
+      <param.native.matlab />
+      <param.checkbox />
+      <param.example />
+      <param.help.text />
+    </unset>
+    <fileset.main>
+      <file>${PROJECT_ROOT}\MFM.m</file>
+    </fileset.main>
+    <fileset.resources>
+      <file>${PROJECT_ROOT}\bioformats_package.jar</file>
+      <file>${PROJECT_ROOT}\loci_tools.jar</file>
+    </fileset.resources>
+    <fileset.package />
+    <fileset.depfun>
+      <file>${PROJECT_ROOT}\beadalign.m</file>
+      <file>${PROJECT_ROOT}\beadalign2.m</file>
+      <file>${PROJECT_ROOT}\beadcalibration2.m</file>
+      <file>${PROJECT_ROOT}\beadcenter.m</file>
+      <file>${PROJECT_ROOT}\beadfinder2.m</file>
+      <file>${PROJECT_ROOT}\beadloc.m</file>
+      <file>${PROJECT_ROOT}\bfCheckJavaMemory.m</file>
+      <file>${PROJECT_ROOT}\bfCheckJavaPath.m</file>
+      <file>${PROJECT_ROOT}\bfGetFileExtensions.m</file>
+      <file>${PROJECT_ROOT}\bfGetPlane.m</file>
+      <file>${PROJECT_ROOT}\bfGetReader.m</file>
+      <file>${PROJECT_ROOT}\bfopen.m</file>
+      <file>${PROJECT_ROOT}\bgsubtract.m</file>
+      <file>${PROJECT_ROOT}\com.m</file>
+      <file>${PROJECT_ROOT}\corelucy.m</file>
+      <file>${PROJECT_ROOT}\csv2tracks.m</file>
+      <file>${PROJECT_ROOT}\cutoutnormalize.m</file>
+      <file>${PROJECT_ROOT}\deconvlucygpu.m</file>
+      <file>${PROJECT_ROOT}\diffusionconst.m</file>
+      <file>${PROJECT_ROOT}\filenamefix.m</file>
+      <file>${PROJECT_ROOT}\fit2dgauss.m</file>
+      <file>${PROJECT_ROOT}\fitgeotrans.m</file>
+      <file>${PROJECT_ROOT}\gaussian2d.m</file>
+      <file>${PROJECT_ROOT}\h5import2.m</file>
+      <file>${PROJECT_ROOT}\MFMalign.m</file>
+      <file>${PROJECT_ROOT}\mfmcalibration.m</file>
+      <file>${PROJECT_ROOT}\mfmdeconvolve3.m</file>
+      <file>${PROJECT_ROOT}\MFMparse.m</file>
+      <file>${PROJECT_ROOT}\mfmprocess.m</file>
+      <file>${PROJECT_ROOT}\mfmwrite4.m</file>
+      <file>${PROJECT_ROOT}\mfmzinterp.m</file>
+      <file>${PROJECT_ROOT}\Miji.m</file>
+      <file>${PROJECT_ROOT}\mosaicspt.m</file>
+      <file>${PROJECT_ROOT}\mosaictracking2.m</file>
+      <file>${PROJECT_ROOT}\nd2channelparse.m</file>
+      <file>${PROJECT_ROOT}\padlength.m</file>
+      <file>${PROJECT_ROOT}\parse_inputsgpu.m</file>
+      <file>${PROJECT_ROOT}\peakfinder.m</file>
+      <file>${PROJECT_ROOT}\plottracks.m</file>
+      <file>${PROJECT_ROOT}\psffitgauss.m</file>
+      <file>${PROJECT_ROOT}\psfmaker.m</file>
+      <file>${PROJECT_ROOT}\psfviewer.m</file>
+      <file>${PROJECT_ROOT}\tracksanalyze.m</file>
+      <file>${PROJECT_ROOT}\verLessThan.m</file>
+      <file>${PROJECT_ROOT}\Zseparation.m</file>
+    </fileset.depfun>
+    <build-deliverables>
+      <file location="${PROJECT_ROOT}\MFM\for_testing" name="readme.txt" optional="true">\\dm11.hhmi.org\aic\Jesse\Matlab\MATLAB\MFM Codes\MFM_share\MFM\for_testing\readme.txt</file>
+      <file location="${PROJECT_ROOT}\MFM\for_testing" name="splash.png" optional="false">\\dm11.hhmi.org\aic\Jesse\Matlab\MATLAB\MFM Codes\MFM_share\MFM\for_testing\splash.png</file>
+      <file location="${PROJECT_ROOT}\MFM\for_testing" name="AICMFM.exe" optional="false">\\dm11.hhmi.org\aic\Jesse\Matlab\MATLAB\MFM Codes\MFM_share\MFM\for_testing\AICMFM.exe</file>
+    </build-deliverables>
+    <workflow />
+    <matlab>
+      <root>C:\Program Files\MATLAB\R2017b</root>
+      <toolboxes>
+        <toolbox name="fixedpoint" />
+        <toolbox name="matlabcoder" />
+        <toolbox name="matlabhdlcoder" />
+        <toolbox name="embeddedcoder" />
+        <toolbox name="gpucoder" />
+        <toolbox name="polyspacebugfinder" />
+      </toolboxes>
+      <toolbox>
+        <fixedpoint>
+          <enabled>true</enabled>
+        </fixedpoint>
+      </toolbox>
+      <toolbox>
+        <matlabcoder>
+          <enabled>true</enabled>
+        </matlabcoder>
+      </toolbox>
+      <toolbox>
+        <matlabhdlcoder>
+          <enabled>true</enabled>
+        </matlabhdlcoder>
+      </toolbox>
+      <toolbox>
+        <embeddedcoder>
+          <enabled>true</enabled>
+        </embeddedcoder>
+      </toolbox>
+      <toolbox>
+        <gpucoder>
+          <enabled>true</enabled>
+        </gpucoder>
+      </toolbox>
+      <toolbox>
+        <polyspacebugfinder>
+          <enabled>true</enabled>
+        </polyspacebugfinder>
+      </toolbox>
+    </matlab>
+    <platform>
+      <unix>false</unix>
+      <mac>false</mac>
+      <windows>true</windows>
+      <win2k>false</win2k>
+      <winxp>false</winxp>
+      <vista>false</vista>
+      <linux>false</linux>
+      <solaris>false</solaris>
+      <osver>10.0</osver>
+      <os32>false</os32>
+      <os64>true</os64>
+      <arch>win64</arch>
+      <matlab>true</matlab>
+    </platform>
+  </configuration>
+</deployment-project>
