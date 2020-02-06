@@ -1,6 +1,6 @@
 # MFManalysis_Matlab
 
-Dependencies
-https://github.com/aicjanelia/hmm-bayes
-https://github.com/ericwait/matlab-utilities
+Dependencies <br>
+https://github.com/aicjanelia/hmm-bayes <br>
+https://github.com/ericwait/matlab-utilities <br>
 https://github.com/ericwait/hydra-image-processor
