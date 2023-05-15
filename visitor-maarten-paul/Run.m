@@ -1,4 +1,3 @@
-%% Original script to run analysis, basis of the Batch_run2022.m script that allows to process multiple folder at once
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% User Settings
 rootDir = 'E:\20190312\Deconvolution';

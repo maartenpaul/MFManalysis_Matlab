@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% User Settings
-rootDir = 'E:\20190322\Deconvolution';
+rootDir = 'E:\20190313\Deconvolution';
     pixelSize = [0.120,0.120,0.420]; % (x,y,z) in um
     timeBetweenFrames = 0.052;
 
@@ -11,11 +11,9 @@ filesStr = dir('Traj_*preprocessed.tif.csv');
 cropFromEdge=8;
 startFrame=50;
 
-
 %error at 11
 
-for k=1:length(filesStr)
-   
+for k=30:length(filesStr)
    trackingFileName =  filesStr(k).name;
    objectMaskImageName = strsplit(trackingFileName,'Traj_');
    objectMaskImageName = objectMaskImageName{1,2};
@@ -55,22 +53,7 @@ for k=1:length(filesStr)
     saveTrackData(rootDir,conditionName,trackData);
    % HMM_Bayes.SaveResults(rootDir,conditionName,trackData,results,locationError);
     saveToMtrackJ(rootDir,conditionName,trackData,cropFromEdge,startFrame,4);
-    
-    imBW = applyAffineTransformation(imBW_truth);
 
-     %writeMFMh5image(im,rootDir,'im_190312_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0012__Ch2.h5','uint16');
-     %writeMFMtiffimage(im,rootDir,['im_' conditionName '.tif'],'uint16');
-
-     %writeMFMh5image(imBW,rootDir,'im_BW_190312_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0012__Ch2.h5','uint8');
-        if m==1
-            writeMFMtiffimage(imBW,saveDir,['transformed_' num2str(m) '_imBW_' conditionName '.tif'],'uint8');
-        end
-
-        %% Assosiate the masked data with the track data
-        %trackData = CoorelateTrackWithMask(trackData,imBW,pixelSize);
-        trackData = CoorelateTrackWithMaskMP(trackData,imBW,pixelSize,cropFromEdge,startFrame);
-        saveTrackData(saveDir,['Traj_transformed_' num2str(m) '_' conditionName],trackData);
-    
     %% Plot (optional)
    % HMM_Bayes.MakeTrackFigures(fullfile(rootDir,[conditionName,'_hmm-bayes.mat']),fullfile(rootDir,conditionName));
    % PlotTracks(im,trackData,pixelSize,fullfile(rootDir,conditionName));
