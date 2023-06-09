@@ -1,0 +1,146 @@
+function trackData = CoorelateTrackWithMaskMPv3(trackData,im,imBW,pixelSize_um_xyz,cropFromEdge,startFrame,verbose)
+    if (~exist('verbose','var') || isempty(verbose))
+        verbose = false;
+    end
+
+        dimIm = size(im); 
+
+        labelIm = bwlabeln(imBW);
+        fociFeatures = struct('features',[]);
+        for j=1:dimIm(5)
+            fociFeatures(j).features = regionprops(labelIm(:,:,:,1,j));
+        end
+
+        distMap = zeros(dimIm);
+        
+        parfor j=1:dimIm(5)
+             %Yuriy Mishchenko (2020). 3D Euclidean Distance Transform for Variable Data Aspect Ratio (https://www.mathworks.com/matlabcentral/fileexchange/15455-3d-euclidean-distance-transform-for-variable-data-aspect-ratio), MATLAB Central File Exchange. Retrieved March 6, 2020. 
+              distMap(:,:,:,1,j) = bwdistsc(imBW(:,:,:,1,j),pixelSize_um_xyz);
+        end
+
+        invDistMap = zeros(dimIm);
+        
+        parfor j=1:dimIm(5)
+             %Yuriy Mishchenko (2020). 3D Euclidean Distance Transform for Variable Data Aspect Ratio (https://www.mathworks.com/matlabcentral/fileexchange/15455-3d-euclidean-distance-transform-for-variable-data-aspect-ratio), MATLAB Central File Exchange. Retrieved March 6, 2020. 
+              invDistMap(:,:,:,1,j) = bwdistsc(~imBW(:,:,:,1,j),pixelSize_um_xyz);
+        end
+       
+        
+        meanIntArray = zeros(9,dimIm(5));
+        normIntArray = zeros(9,dimIm(5));
+        sdIntArray = zeros(9,dimIm(5));
+        maxIntArray = zeros(9,dimIm(5));
+        minIntArray = zeros(9,dimIm(5));
+        parfor j=1:dimIm(5)
+           for k=1:9
+               meanIntArray(k,j) = mean(im(:,:,k,1,j),'all');
+               normIntArray(k,j) = mean(im(:,:,k,1,j),'all');
+               sdIntArray(k,j) =   std(im(:,:,k,1,j),1,'all');
+               maxIntArray(k,j) = max(im(:,:,k,1,j),[],'all');
+               minIntArray(k,j) = min(im(:,:,k,1,j),[],'all');
+           end
+        end
+        
+        
+    
+    
+    for i=1:length(trackData)
+        curPos_xyz = trackData(i).pos_xyz;
+        frames = trackData(i).frames;
+        damaged = false(length(frames),1);
+        rawInt = zeros(length(frames),1);
+        meanInt = zeros(length(frames),1);
+        normInt = zeros(length(frames),1);
+        maxInt  = zeros(length(frames),1);
+        minInt = zeros(length(frames),1);
+        sdInt = zeros(length(frames),1);
+        distMask = zeros(length(frames),1);
+        invDistMask = zeros(length(frames),1); 
+        label = zeros(length(frames),1);
+        center_x = zeros(length(frames),1); 
+        center_y = zeros(length(frames),1); 
+        center_z = zeros(length(frames),1);
+        distanceCentroid3D = zeros(length(frames),1);
+        distanceCentroid2D = zeros(length(frames),1);
+        distanceToNearest3D = zeros(length(frames),1);
+        distanceToNearest2D = zeros(length(frames),1);
+
+        for j=1:length(frames)
+            curP = curPos_xyz(j,:)./pixelSize_um_xyz;
+            curP = round(curP);
+            curP(1) = curP(1)+cropFromEdge;
+            curP(2) = curP(2)+cropFromEdge;
+            curP(3) = min(9,max(1,curP(3)));
+            t = frames(j) +1+startFrame;
+            curPnm= curPos_xyz(j,:);
+            curPnm(1) = curPnm(1)+cropFromEdge*pixelSize_um_xyz(1);
+            curPnm(2) = curPnm(2)+cropFromEdge*pixelSize_um_xyz(2);
+            damaged(j) = imBW(curP(2),curP(1),curP(3),1,t);
+            rawInt(j) = im(curP(2),curP(1),curP(3),1,t);
+            normInt(j) = normIntArray(curP(3),t);
+            meanInt(j) = meanIntArray(curP(3),t);
+            sdInt(j) = sdIntArray(curP(3),t);
+            maxInt(j) = maxIntArray(curP(3),t);
+            minInt(j) =  minIntArray(curP(3),t);
+            distMask(j) = distMap(curP(2),curP(1),curP(3),1,t);
+            invDistMask(j) = invDistMap(curP(2),curP(1),curP(3),1,t);
+            label(j) = labelIm(curP(2),curP(1),curP(3),1,t);
+            if (label(j)>0)
+                centroid = fociFeatures(t).features(label(j)).Centroid;
+                centroid_nm = centroid.*pixelSize_um_xyz;
+                distanceCentroid3D(j) = sqrt((centroid_nm(1)-curPnm(1))^2+(centroid_nm(2)-curPnm(2))^2+(centroid_nm(3)-curPnm(3))^2 );
+                distanceCentroid2D(j) = sqrt((centroid_nm(1)-curPnm(1))^2+(centroid_nm(2)-curPnm(2))^2);
+                center_x(j) = centroid_nm(1);
+                center_y(j) = centroid_nm(2);
+                center_z(j) = centroid_nm(3);
+            else
+                distanceCentroid3D(j) = -1;
+                distanceCentroid2D(j) = -1;
+                center_x(j) = -1;
+                center_y(j) = -1;
+                center_z(j) = -1;
+            end
+            allCentroids = fociFeatures(t).features(vertcat(fociFeatures(t).features.Area)>0);
+            allCentroids = vertcat(allCentroids.Centroid);
+            if (~isempty(allCentroids))
+                allCentroids_nm = allCentroids.*pixelSize_um_xyz;
+                distanceToNearest3D(j) = pdist2(allCentroids_nm,curPnm,'euclidean', 'Smallest',1);
+                distanceToNearest2D(j) = pdist2(allCentroids_nm(:,1:2),curPnm(1:2),'euclidean', 'Smallest',1);
+            else
+                distanceToNearest3D(j) = -1;
+                distanceToNearest2D(j) = -1;
+            end
+        end
+        
+        trackData(i).inMask = damaged;
+        trackData(i).rawInt = rawInt;
+        trackData(i).meanInt = meanInt;
+        trackData(i).normInt = normInt;
+        trackData(i).sdInt = sdInt;
+        trackData(i).maxInt = maxInt;
+        trackData(i).minInt = minInt;
+        trackData(i).distMask = distMask;
+        trackData(i).invDistMask = invDistMask;
+        trackData(i).label = label;
+        trackData(i).center_x = center_x;
+        trackData(i).center_y = center_y;
+        trackData(i).center_z = center_z;
+        trackData(i).distanceCentroid3D = distanceCentroid3D;
+        trackData(i).distanceCentroid2D = distanceCentroid2D;
+        trackData(i).distanceToNearest3D = distanceToNearest3D;
+        trackData(i).distanceToNearest2D = distanceToNearest2D;
+       
+        if (~verbose)
+            continue
+        end
+        
+        ind = find(damaged);
+        if (~isempty(ind))
+            fprintf('Track %d, frames:',i);
+            for j=1:length(ind)
+                fprintf('%d, ',ind(j));
+            end
+            fprintf('\n');
+        end
+    end
+end
