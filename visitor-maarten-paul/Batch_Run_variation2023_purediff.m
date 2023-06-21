@@ -1,12 +1,13 @@
-datasets = ['20190322/Deconvolution' ];
+datasets = ['diffusion/Deconvolution/' ];
 %%'20190312/Deconvolution'; '20190313/Deconvolution'; 
 
-
+%/media/DATA/Maarten/MFM/results_2023/diffusion/Deconvolution/pure_3D_diffusion_model_output.csv
+%/media/mount/2023_purediffusion/Deconvolution/Traj_190313exp1_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0002__Ch1_preprocessed.tif.csv
 for z=1:length(datasets(:,1))
     disp(['Running dataset: ' datasets(z,:)]);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %% User Settings
-    rootDir = ['/media/mount/' datasets(z,:)];
+    rootDir = ['/media/DATA/Maarten/MFM/results_2023/' datasets(z,:)];
     pixelSize = [0.120,0.120,0.420]; % (x,y,z) in um
     timeBetweenFrames = 0.052;
 
@@ -18,7 +19,7 @@ for z=1:length(datasets(:,1))
     %need to fix this regular expression because transformed files will also be
     %analyzed (proably will give an error)
     cropFromEdge=8;
-    startFrame=50;
+    startFrame=0;
 
 
     saveDir = ['/media/DATA/Maarten/MFM/results_2023/' datasets(z,:)];

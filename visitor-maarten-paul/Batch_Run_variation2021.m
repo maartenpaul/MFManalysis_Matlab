@@ -1,4 +1,6 @@
-datasets = ['20190322/Deconvolution' ];
+datasets = [ '20190314/Deconvolution';...
+    '20190315/Deconvolution'; '20190316/Deconvolution'; '20190317/Deconvolution'; '20190320/Deconvolution';...
+    '20190321/Deconvolution'; '20190322/Deconvolution' ];
 %%'20190312/Deconvolution'; '20190313/Deconvolution'; 
 
 
@@ -13,8 +15,7 @@ for z=1:length(datasets(:,1))
     minTrackLength = 10;
     numberOfDiffusionStates = 1;
     cd(rootDir);
-    filesStr = dir('Traj_*Ch1_preprocessed.tif.csv');
-
+    filesStr = dir('Traj_*preprocessed_tracks_mask.csv');
     %need to fix this regular expression because transformed files will also be
     %analyzed (proably will give an error)
     cropFromEdge=8;
@@ -26,6 +27,7 @@ for z=1:length(datasets(:,1))
         mkdir(saveDir)
     end
 
+
     %error at 11
 
     for k=1:length(filesStr)
@@ -35,7 +37,7 @@ for z=1:length(datasets(:,1))
             continue
         end
 %        if(not(contains(trackingFileName,"53bp1")))
-        if(not(contains(trackingFileName,"53bp1")))
+        if(not(contains(trackingFileName,"R54")))
 
             continue
         end
@@ -44,7 +46,7 @@ for z=1:length(datasets(:,1))
         end
         objectMaskImageName = strsplit(trackingFileName,'Traj_');
         objectMaskImageName = objectMaskImageName{1,2};
-        objectMaskImageName = strsplit(objectMaskImageName,'__Ch1_preprocessed.tif.csv');
+        objectMaskImageName = strsplit(objectMaskImageName,'__Ch1_preprocessed_tracks_mask.csv');
         objectMaskImageName = objectMaskImageName{1,1};
         trackingFileName = ['Traj_',objectMaskImageName,'__Ch1_preprocessed.tif.csv'];
         objectMaskImageName = [objectMaskImageName,'__Ch2.h5'];
@@ -57,6 +59,10 @@ for z=1:length(datasets(:,1))
         %% HMM-Bayes
         trackData = HMM_Bayes.CSVimport(fullfile(rootDir,trackingFileName),'Trajectory','x','y','z','Frame',timeBetweenFrames,pixelSize(1),pixelSize(3));
 
+
+        
+
+         
         
         if ~isfile(fullfile(saveDir,['imBW_' conditionName '.mat']))
             disp(['interpolate and get mask at: ' datestr(now,'HH:MM:SS')]);

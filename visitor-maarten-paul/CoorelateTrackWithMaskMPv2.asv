@@ -3,22 +3,12 @@ function trackData = CoorelateTrackWithMaskMPv2(trackData,im,imBW,pixelSize_um_x
         verbose = false;
     end
 
-        dimIm = size(im); 
-
-        bwconncomp(im)
-
+        dimIm = size(im);       
         distMap = zeros(dimIm);
         
         parfor j=1:dimIm(5)
              %Yuriy Mishchenko (2020). 3D Euclidean Distance Transform for Variable Data Aspect Ratio (https://www.mathworks.com/matlabcentral/fileexchange/15455-3d-euclidean-distance-transform-for-variable-data-aspect-ratio), MATLAB Central File Exchange. Retrieved March 6, 2020. 
               distMap(:,:,:,1,j) = bwdistsc(imBW(:,:,:,1,j),pixelSize_um_xyz);
-        end
-
-        invDistMap = zeros(dimIm);
-        
-        parfor j=1:dimIm(5)
-             %Yuriy Mishchenko (2020). 3D Euclidean Distance Transform for Variable Data Aspect Ratio (https://www.mathworks.com/matlabcentral/fileexchange/15455-3d-euclidean-distance-transform-for-variable-data-aspect-ratio), MATLAB Central File Exchange. Retrieved March 6, 2020. 
-              invDistMap(:,:,:,1,j) = bwdistsc(~imBW(:,:,:,1,j),pixelSize_um_xyz);
         end
        
         
@@ -31,7 +21,7 @@ function trackData = CoorelateTrackWithMaskMPv2(trackData,im,imBW,pixelSize_um_x
            for k=1:9
                meanIntArray(k,j) = mean(im(:,:,k,1,j),'all');
                normIntArray(k,j) = mean(im(:,:,k,1,j),'all');
-               sdIntArray(k,j) =   std(im(:,:,k,1,j),1,'all');
+               sdIntArray(k,j) =    std(im(:,:,k,1,j),1,'all');
                maxIntArray(k,j) = max(im(:,:,k,1,j),[],'all');
                minIntArray(k,j) = min(im(:,:,k,1,j),[],'all');
            end
@@ -51,7 +41,6 @@ function trackData = CoorelateTrackWithMaskMPv2(trackData,im,imBW,pixelSize_um_x
         minInt = zeros(length(frames),1);
         sdInt = zeros(length(frames),1);
         distMask = zeros(length(frames),1);
-        invDistMask = zeros(length(frames),1); 
 
         for j=1:length(frames)
             curP = curPos_xyz(j,:)./pixelSize_um_xyz;
@@ -62,26 +51,21 @@ function trackData = CoorelateTrackWithMaskMPv2(trackData,im,imBW,pixelSize_um_x
             t = frames(j) +1+startFrame;
             damaged(j) = imBW(curP(2),curP(1),curP(3),1,t);
             rawInt(j) = im(curP(2),curP(1),curP(3),1,t);
-            normInt(j) = normIntArray(curP(3),t);
+            normInt = im(curP(2),curP(1),curP(3),1,t);
             meanInt(j) = meanIntArray(curP(3),t);
             sdInt(j) = sdIntArray(curP(3),t);
             maxInt(j) = maxIntArray(curP(3),t);
             minInt(j) =  minIntArray(curP(3),t);
             distMask(j) = distMap(curP(2),curP(1),curP(3),1,t);
-            invDistMask(j) = invDistMap(curP(2),curP(1),curP(3),1,t);
-
         end
         
         trackData(i).inMask = damaged;
         trackData(i).rawInt = rawInt;
         trackData(i).meanInt = meanInt;
-        trackData(i).normInt = normInt;
         trackData(i).sdInt = sdInt;
         trackData(i).maxInt = maxInt;
         trackData(i).minInt = minInt;
         trackData(i).distMask = distMask;
-        trackData(i).invDistMask = invDistMask;
-
         
         if (~verbose)
             continue

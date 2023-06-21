@@ -1,21 +1,23 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% User Settings
-rootDir = 'E:\20190322\Deconvolution';
-    pixelSize = [0.120,0.120,0.420]; % (x,y,z) in um
-    timeBetweenFrames = 0.052;
-
-    minTrackLength = 10;
-    numberOfDiffusionStates = 1;
+%rootDir = 'E:\20190318\Deconvolution\processed';
+%rootDir = 'E:\20190319\Deconvolution\processed';
+rootDir = '/media/mount/20190318/Deconvolution/processed/';
+pixelSize = [0.120,0.120,0.420]; % (x,y,z) in um
+timeBetweenFrames = 0.052;
+minTrackLength = 3;
+numberOfDiffusionStates = 1;
 cd(rootDir); 
 filesStr = dir('Traj_*preprocessed.tif.csv');
 cropFromEdge=8;
-startFrame=50;
+startFrame=0;
 
 
 %error at 11
 
 for k=1:length(filesStr)
-   
+%for k=[13:17,33:38]
+
    trackingFileName =  filesStr(k).name;
    objectMaskImageName = strsplit(trackingFileName,'Traj_');
    objectMaskImageName = objectMaskImageName{1,2};
@@ -40,39 +42,25 @@ for k=1:length(filesStr)
     %[trackData,results,locationError] = HMM_Bayes.LoadResults(rootDir,conditionName);
 
     %% Get DNA Damage Mask
-    im = InterpolateFrames(rootDir,objectMaskImageName);
+    im = InterpolateFrames(rootDir,objectMaskImageName,true);
+    %h5Name=objectMaskImageName;
     imBW = GetMask(im);
 
     %writeMFMh5image(im,rootDir,'im_190312_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0012__Ch2.h5','uint16');
-    writeMFMtiffimage(im,rootDir,['im_' conditionName '.tif'],'uint16');
+    %writeMFMtiffimage(im,rootDir,['im_' conditionName '.tif'],'uint16');
 
     %writeMFMh5image(imBW,rootDir,'im_BW_190312_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0012__Ch2.h5','uint8');
-    writeMFMtiffimage(imBW,rootDir,['imBW_' conditionName '.tif'],'uint8');
+    %writeMFMtiffimage(imBW,rootDir,['imBW_' conditionName '.tif'],'uint8');
 
     %% Assosiate the masked data with the track data
     %trackData = CoorelateTrackWithMask(trackData,imBW,pixelSize);
-    trackData = CoorelateTrackWithMaskMP(trackData,imBW,pixelSize,cropFromEdge,startFrame);
+    trackData = CoorelateTrackWithMaskMP(trackData,imBW,im,pixelSize,cropFromEdge,startFrame);
     saveTrackData(rootDir,conditionName,trackData);
    % HMM_Bayes.SaveResults(rootDir,conditionName,trackData,results,locationError);
     saveToMtrackJ(rootDir,conditionName,trackData,cropFromEdge,startFrame,4);
-    
-    imBW = applyAffineTransformation(imBW_truth);
 
-     %writeMFMh5image(im,rootDir,'im_190312_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0012__Ch2.h5','uint16');
-     %writeMFMtiffimage(im,rootDir,['im_' conditionName '.tif'],'uint16');
-
-     %writeMFMh5image(imBW,rootDir,'im_BW_190312_53bp1_GFP_B2WTG10_MMC_50ms_100_f488int_0012__Ch2.h5','uint8');
-        if m==1
-            writeMFMtiffimage(imBW,saveDir,['transformed_' num2str(m) '_imBW_' conditionName '.tif'],'uint8');
-        end
-
-        %% Assosiate the masked data with the track data
-        %trackData = CoorelateTrackWithMask(trackData,imBW,pixelSize);
-        trackData = CoorelateTrackWithMaskMP(trackData,imBW,pixelSize,cropFromEdge,startFrame);
-        saveTrackData(saveDir,['Traj_transformed_' num2str(m) '_' conditionName],trackData);
-    
     %% Plot (optional)
    % HMM_Bayes.MakeTrackFigures(fullfile(rootDir,[conditionName,'_hmm-bayes.mat']),fullfile(rootDir,conditionName));
    % PlotTracks(im,trackData,pixelSize,fullfile(rootDir,conditionName));
-
+   
 end
