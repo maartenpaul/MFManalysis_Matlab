@@ -1,4 +1,4 @@
-function trackData = CoorelateTrackWithMaskMPv3(trackData,im,imBW,pixelSize_um_xyz,cropFromEdge,startFrame,verbose)
+function trackData = CoorelateTrackWithMaskMPv3(trackData,im,imBW,pixelSize_um_xyz,cropFromEdge,startFrame,saveFeaturesName,verbose)
     if (~exist('verbose','var') || isempty(verbose))
         verbose = false;
     end
@@ -7,10 +7,19 @@ function trackData = CoorelateTrackWithMaskMPv3(trackData,im,imBW,pixelSize_um_x
 
         labelIm = bwlabeln(imBW);
         fociFeatures = struct('features',[]);
+        final =table;
         for j=1:dimIm(5)
             fociFeatures(j).features = regionprops(labelIm(:,:,:,1,j));
+            data = regionprops('table',labelIm(:,:,:,1,j));
+            data = rmmissing(data);
+            data.frame = repmat(j,size(data,1),1);
+            final = [final;data];
+            
         end
-
+        writetable(final,[saveFeaturesName '.csv']);
+        
+        fociFeaturesSave = fociFeatures(1);
+        save([saveFeaturesName '.mat'],'fociFeaturesSave');
         distMap = zeros(dimIm);
         
         parfor j=1:dimIm(5)
@@ -66,6 +75,10 @@ function trackData = CoorelateTrackWithMaskMPv3(trackData,im,imBW,pixelSize_um_x
         distanceToNearest2D = zeros(length(frames),1);
 
         for j=1:length(frames)
+            curP(1) = 61;
+            curP(2) = 68;
+            curP(3) = 4;
+            curPnm = curP.*pixelSize_um_xyz;
             curP = curPos_xyz(j,:)./pixelSize_um_xyz;
             curP = round(curP);
             curP(1) = curP(1)+cropFromEdge;
@@ -88,27 +101,32 @@ function trackData = CoorelateTrackWithMaskMPv3(trackData,im,imBW,pixelSize_um_x
             if (label(j)>0)
                 centroid = fociFeatures(t).features(label(j)).Centroid;
                 centroid_nm = centroid.*pixelSize_um_xyz;
-                distanceCentroid3D(j) = sqrt((centroid_nm(1)-curPnm(1))^2+(centroid_nm(2)-curPnm(2))^2+(centroid_nm(3)-curPnm(3))^2 );
-                distanceCentroid2D(j) = sqrt((centroid_nm(1)-curPnm(1))^2+(centroid_nm(2)-curPnm(2))^2);
-                center_x(j) = centroid_nm(1);
-                center_y(j) = centroid_nm(2);
-                center_z(j) = centroid_nm(3);
+                distanceCentroid3D(j) = sqrt((centroid_nm(1)-curPnm(2))^2+(centroid_nm(2)-curPnm(1))^2+(centroid_nm(3)-curPnm(3))^2 );
+                distanceCentroid2D(j) = sqrt((centroid_nm(1)-curPnm(2))^2+(centroid_nm(2)-curPnm(1))^2);
+
+
             else
                 distanceCentroid3D(j) = -1;
                 distanceCentroid2D(j) = -1;
-                center_x(j) = -1;
-                center_y(j) = -1;
-                center_z(j) = -1;
             end
             allCentroids = fociFeatures(t).features(vertcat(fociFeatures(t).features.Area)>0);
             allCentroids = vertcat(allCentroids.Centroid);
             if (~isempty(allCentroids))
+                allCentroids = allCentroids(:,[2,1,3]);
                 allCentroids_nm = allCentroids.*pixelSize_um_xyz;
+                allDistances_nm = pdist2(allCentroids_nm,curPnm,'euclidean');
+                [minDistance,minDistanceCoord] = min(allDistances_nm);
+                center_x(j) = allCentroids_nm(minDistanceCoord,1);
+                center_y(j) = allCentroids_nm(minDistanceCoord,2);
+                center_z(j) = allCentroids_nm(minDistanceCoord,3);
                 distanceToNearest3D(j) = pdist2(allCentroids_nm,curPnm,'euclidean', 'Smallest',1);
                 distanceToNearest2D(j) = pdist2(allCentroids_nm(:,1:2),curPnm(1:2),'euclidean', 'Smallest',1);
             else
                 distanceToNearest3D(j) = -1;
                 distanceToNearest2D(j) = -1;
+                center_x(j) = -1;
+                center_y(j) = -1;
+                center_z(j) = -1;
             end
         end
         
